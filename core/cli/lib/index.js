@@ -10,32 +10,120 @@ module.exports = core;
 
 // const file = require('../file.txt');
 // file();
-
+const path = require('path');
 const semver = require('semver');
 const colors = require('colors/safe');
+const userHome = require('user-home');
+const pathExists = require('path-exists').sync;
 const log = require('@cli-test/log');
 
 const constance = require('./const');
 const pkg = require('../package.json');
+
+let args;
 
 function core() {
   try {
     checkPkgVersion();
     checkNodeVersion();
     checkRoot();
+    checkUserHome();
+    checkInputArgs();
+    checkEnv();
+    checkGlobalUpdate();
   } catch (error) {
     log.error('cli', error.message)
   }
 }
 
 /**
+ * 检查是否为最新版本号
+ */
+async function checkGlobalUpdate() {
+  // 获取 当前版本号 和 模块名
+  const currentVersion = pkg.version;
+  const npmName = pkg.name;
+
+  // 比对最新版本号，提示更新
+  const { getNpmSemverVersion } = require('@cli-test/get-npm-info');
+  const lastVersion = await getNpmSemverVersion(currentVersion, npmName);
+
+  if (lastVersion && semver.gt(lastVersion, currentVersion)) {
+    log.warn('更新提示', colors.yellow(`请更新版本，当前版本：${currentVersion}, 最新版本：${lastVersion}; 可使用命令 npm install -g ${npmName}`));
+  }
+}
+
+/**
+ * 检查环境变量
+ * 可以在操作系统中配置一些环境变量，将 用户名、密码等敏感信息保存在本地，而不用继承到代码当中，需要的时候就可以时时读取，同时可以修改许多配置信息
+ */
+function checkEnv() {
+  const dotenv = require('dotenv');
+
+  const dotenvPath = path.resolve(userHome, '.env');
+
+  if (pathExists(dotenv)) {
+    // 读取环境变量并添加到 process.env 中
+    dotenv.config({ path: dotenvPath });
+  }
+
+  createDefaultCliConfig();
+
+  log.verbose('环境变量', process.env.CLI_HOME_PATH)
+}
+
+function createDefaultCliConfig() {
+  const cliConfig = {};
+
+  if (process.env.CLI_HOME) {
+    cliConfig['cliHome'] = path.join(userHome, process.env.CLI_HOME);
+  } else {
+    cliConfig['cliHome'] = path.join(userHome, constance.DEFAULT_CLI_HOME);
+  }
+
+  process.env.CLI_HOME_PATH = cliConfig['cliHome']
+}
+
+/**
+ * 检查入参
+ * 是否开启debug模式
+ */
+function checkInputArgs() {
+  const minimist = require('minimist');
+  args = minimist(process.argv.slice(2));
+
+  checkArgs()
+}
+
+function checkArgs() {
+  if (args.debug) {
+    process.env.LOG_LEVEL = 'verbose';
+  }
+
+  log.level = process.env.LOG_LEVEL || 'info';
+}
+
+/**
+ * 判断用户主目录是否存在
+ * 后续 缓存 等需要使用
+ */
+function checkUserHome() {
+  if (!userHome || !pathExists(userHome)) {
+    throw Error(colors.red('用户主目录不存在'))
+  }
+}
+
+/**
  * root 账户检查并自动降级
  * 防止 root 启动带来的文件读写权限问题
+ * 使用了 process.geteuid 和 process.setuid 等 api，在 windows 上不适用
  */
 function checkRoot() {
-  // const rootCheck = require('root-check');
+  // rootCheck v2 采用 es6 module 写法，如想使用 require，需降版本到 v1
+  const rootCheck = require('root-check');
+  // const { default: rootCheck} = await import('root-check')
 
-  // rootCheck()
+  rootCheck()
 }
 
 /**
