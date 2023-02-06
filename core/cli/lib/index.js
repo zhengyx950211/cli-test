@@ -22,7 +22,7 @@ const pkg = require('../package.json');
 
 let args;
 
-function core() {
+async function core() {
   try {
     checkPkgVersion();
     checkNodeVersion();
@@ -30,7 +30,7 @@ function core() {
     checkUserHome();
     checkInputArgs();
     checkEnv();
-    checkGlobalUpdate();
+    await checkGlobalUpdate();
   } catch (error) {
     log.error('cli', error.message)
   }
