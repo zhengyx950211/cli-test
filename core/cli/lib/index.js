@@ -15,12 +15,16 @@ const semver = require('semver');
 const colors = require('colors/safe');
 const userHome = require('user-home');
 const pathExists = require('path-exists').sync;
+const commander = require('commander');
 const log = require('@cli-test/log');
+const init = require('@cli-test/init');
 
 const constance = require('./const');
 const pkg = require('../package.json');
 
 let args;
+
+const program = new commander.Command();
 
 async function core() {
   try {
@@ -28,11 +32,53 @@ async function core() {
     checkNodeVersion();
     checkRoot();
     checkUserHome();
-    checkInputArgs();
+    // checkInputArgs();
     checkEnv();
     await checkGlobalUpdate();
+    registerCommand();
   } catch (error) {
     log.error('cli', error.message)
+  }
+}
+
+function registerCommand() {
+  program
+    .name(Object.keys(pkg.bin)[0])
+    .usage('[command] <options>')
+    .version(pkg.version)
+    .option('-d, --debug', '是否开启调试模式', false);
+  
+  // 注册 init 命令
+  program
+    .command('init [projectName]')
+    .option('-f, --force', '是否强制初始化项目')
+    .action(init);
+
+  // 开启 debug 模式
+  program.on('option:debug', () => {
+    // const options = program.opts();
+
+    // if (options.debug) {
+      process.env.LOG_LEVEL = 'verbose';
+    // }
+  
+    log.level = process.env.LOG_LEVEL || 'info';
+  })
+
+  // 对未知命令的监听
+  program.on('command:*', (obj) => {
+    console.log(obj, program.commands)
+    const availableCommands = program.commands.map(cmd => cmd.name());
+
+    console.log(colors.red(`未知的命令：${obj[0]}`));
+    console.log(colors.green(`可用命令：${availableCommands.join(', ')}`));
+  })
+
+  program.parse(process.argv);
+
+  if (program.args && program.args.length < 1) {
+    program.outputHelp();
+    console.log();
   }
 }
 
