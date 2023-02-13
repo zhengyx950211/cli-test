@@ -18,27 +18,33 @@ const pathExists = require('path-exists').sync;
 const commander = require('commander');
 const log = require('@cli-test/log');
 const init = require('@cli-test/init');
+const exec = require('@cli-test/exec');
 
 const constance = require('./const');
 const pkg = require('../package.json');
 
-let args;
+// let args;
 
 const program = new commander.Command();
 
 async function core() {
   try {
-    checkPkgVersion();
-    checkNodeVersion();
-    checkRoot();
-    checkUserHome();
-    // checkInputArgs();
-    checkEnv();
-    await checkGlobalUpdate();
+    await prepare();
+
     registerCommand();
   } catch (error) {
     log.error('cli', error.message)
   }
+}
+
+async function prepare() {
+  checkPkgVersion();
+  checkNodeVersion();
+  checkRoot();
+  checkUserHome();
+  // checkInputArgs();
+  checkEnv();
+  await checkGlobalUpdate();
 }
 
 function registerCommand() {
@@ -46,13 +52,14 @@ function registerCommand() {
     .name(Object.keys(pkg.bin)[0])
     .usage('[command] <options>')
     .version(pkg.version)
-    .option('-d, --debug', '是否开启调试模式', false);
+    .option('-d, --debug', '是否开启调试模式', false)
+    .option('-tp, --targetPath <targetPath>', '是否指定本地调试文件路径', '');
   
   // 注册 init 命令
   program
     .command('init [projectName]')
     .option('-f, --force', '是否强制初始化项目')
-    .action(init);
+    .action(exec);
 
   // 开启 debug 模式
   program.on('option:debug', () => {
@@ -63,6 +70,11 @@ function registerCommand() {
     // }
   
     log.level = process.env.LOG_LEVEL || 'info';
+  })
+
+  // 监听本地调试模式
+  program.on('option:targetPath', () => {
+    process.env.CLI_TARGET_PATH = program.opts().targetPath;
   })
 
   // 对未知命令的监听
@@ -131,23 +143,23 @@ function createDefaultCliConfig() {
 }
 
 /**
- * 检查入参
+ * 检查入参 (使用 commander 监听实现)
  * 是否开启debug模式
  */
-function checkInputArgs() {
-  const minimist = require('minimist');
-  args = minimist(process.argv.slice(2));
+// function checkInputArgs() {
+//   const minimist = require('minimist');
+//   args = minimist(process.argv.slice(2));
 
-  checkArgs()
-}
+//   checkArgs()
+// }
 
-function checkArgs() {
-  if (args.debug) {
-    process.env.LOG_LEVEL = 'verbose';
-  }
+// function checkArgs() {
+//   if (args.debug) {
+//     process.env.LOG_LEVEL = 'verbose';
+//   }
 
-  log.level = process.env.LOG_LEVEL || 'info';
-}
+//   log.level = process.env.LOG_LEVEL || 'info';
+// }
 
 /**
  * 判断用户主目录是否存在

@@ -35,6 +35,7 @@
     "@cli-test/get-npm-info": "file:../../utils/get-npm-info",
     "@cli-test/log": "file:../../utils/log",
     "@cli-test/init": "file:../../commands/init",
+    "@cli-test/exec": "file:../exec",
     "colors": "^1.4.0",
     "commander": "^10.0.0",
     "dotenv": "^16.0.3",
