@@ -1,0 +1,2 @@
+- CLI_TARGET_PATH 调试的本地文件路径？
+- CLI_HOME_PATH 缓存路径

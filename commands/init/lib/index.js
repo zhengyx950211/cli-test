@@ -2,6 +2,6 @@
 
 module.exports = init;
 
-function init(projectName, cmsOptions) {
-  console.log(projectName, cmsOptions)
+function init(projectName, cmdOptions) {
+  console.log(projectName, cmdOptions);
 }

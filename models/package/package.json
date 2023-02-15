@@ -1,9 +1,9 @@
 {
-  "name": "@cli-test/exec",
+  "name": "@cli-test/package",
   "version": "1.0.0",
-  "description": "cli-test exec",
+  "description": "cli-test modules",
   "author": "yexin.zheng <yexin.zheng@tcl.com>",
-  "homepage": "https://github.com/zhengyx950211/cli-test/tree/main/core/exec#readme",
+  "homepage": "https://github.com/zhengyx950211/cli-test/tree/main/models/package#readme",
   "license": "ISC",
   "main": "lib/index.js",
   "directories": {
@@ -21,13 +21,18 @@
     "url": "git+https://github.com/zhengyx950211/cli-test.git"
   },
   "scripts": {
-    "test": "node ./__tests__/@cli-test/exec.test.js"
+    "test": "node ./__tests__/@cli-test/package.test.js"
   },
   "bugs": {
     "url": "https://github.com/zhengyx950211/cli-test/issues"
   },
   "dependencies": {
-    "@cli-test/package": "file:../../models/package",
-    "@cli-test/log": "file:../../utils/log"
+    "@cli-test/format-path": "file:../../utils/format-path",
+    "@cli-test/get-npm-info": "file:../../utils/get-npm-info",
+    "@cli-test/utils": "file:../../utils/utils",
+    "fs-extra": "^11.1.0",
+    "npminstall": "^7.5.0",
+    "path-exists": "^4.0.0",
+    "pkg-dir": "^5.0.0"
   }
 }

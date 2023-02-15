@@ -33,7 +33,7 @@ async function core() {
 
     registerCommand();
   } catch (error) {
-    log.error('cli', error.message)
+    log.error('cli', error.message);
   }
 }
 
@@ -54,7 +54,7 @@ function registerCommand() {
     .version(pkg.version)
     .option('-d, --debug', '是否开启调试模式', false)
     .option('-tp, --targetPath <targetPath>', '是否指定本地调试文件路径', '');
-  
+
   // 注册 init 命令
   program
     .command('init [projectName]')
@@ -66,25 +66,25 @@ function registerCommand() {
     // const options = program.opts();
 
     // if (options.debug) {
-      process.env.LOG_LEVEL = 'verbose';
+    process.env.LOG_LEVEL = 'verbose';
     // }
-  
+
     log.level = process.env.LOG_LEVEL || 'info';
-  })
+  });
 
   // 监听本地调试模式
   program.on('option:targetPath', () => {
     process.env.CLI_TARGET_PATH = program.opts().targetPath;
-  })
+  });
 
   // 对未知命令的监听
   program.on('command:*', (obj) => {
-    console.log(obj, program.commands)
-    const availableCommands = program.commands.map(cmd => cmd.name());
+    console.log(obj, program.commands);
+    const availableCommands = program.commands.map((cmd) => cmd.name());
 
     console.log(colors.red(`未知的命令：${obj[0]}`));
     console.log(colors.green(`可用命令：${availableCommands.join(', ')}`));
-  })
+  });
 
   program.parse(process.argv);
 
@@ -107,7 +107,12 @@ async function checkGlobalUpdate() {
   const lastVersion = await getNpmSemverVersion(currentVersion, npmName);
 
   if (lastVersion && semver.gt(lastVersion, currentVersion)) {
-    log.warn('更新提示', colors.yellow(`请更新版本，当前版本：${currentVersion}, 最新版本：${lastVersion}; 可使用命令 npm install -g ${npmName}`));
+    log.warn(
+      '更新提示',
+      colors.yellow(
+        `请更新版本，当前版本：${currentVersion}, 最新版本：${lastVersion}; 可使用命令 npm install -g ${npmName}`
+      )
+    );
   }
 }
 
@@ -127,7 +132,7 @@ function checkEnv() {
 
   createDefaultCliConfig();
 
-  log.verbose('环境变量', process.env.CLI_HOME_PATH)
+  log.verbose('环境变量', process.env.CLI_HOME_PATH);
 }
 
 function createDefaultCliConfig() {
@@ -139,7 +144,7 @@ function createDefaultCliConfig() {
     cliConfig['cliHome'] = path.join(userHome, constance.DEFAULT_CLI_HOME);
   }
 
-  process.env.CLI_HOME_PATH = cliConfig['cliHome']
+  process.env.CLI_HOME_PATH = cliConfig['cliHome'];
 }
 
 /**
@@ -167,7 +172,7 @@ function createDefaultCliConfig() {
  */
 function checkUserHome() {
   if (!userHome || !pathExists(userHome)) {
-    throw Error(colors.red('用户主目录不存在'))
+    throw Error(colors.red('用户主目录不存在'));
   }
 }
 
@@ -181,7 +186,7 @@ function checkRoot() {
   const rootCheck = require('root-check');
   // const { default: rootCheck} = await import('root-check')
 
-  rootCheck()
+  rootCheck();
 }
 
 /**
@@ -194,7 +199,9 @@ function checkNodeVersion() {
   const lowestVersion = constance.LOWEST_NODE_VERSION;
 
   if (!semver.gte(currentVersion, lowestVersion)) {
-    throw Error(colors.red(`使用 cli-test 的 node 版本号需 >= v${lowestVersion} `))
+    throw Error(
+      colors.red(`使用 cli-test 的 node 版本号需 >= v${lowestVersion} `)
+    );
   }
 }
 

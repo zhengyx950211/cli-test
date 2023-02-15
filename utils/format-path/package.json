@@ -1,9 +1,9 @@
 {
-  "name": "@cli-test/exec",
+  "name": "@cli-test/format-path",
   "version": "1.0.0",
-  "description": "cli-test exec",
+  "description": "format path",
   "author": "yexin.zheng <yexin.zheng@tcl.com>",
-  "homepage": "https://github.com/zhengyx950211/cli-test/tree/main/core/exec#readme",
+  "homepage": "https://github.com/zhengyx950211/cli-test/tree/main/utils/format-path#readme",
   "license": "ISC",
   "main": "lib/index.js",
   "directories": {
@@ -21,13 +21,9 @@
     "url": "git+https://github.com/zhengyx950211/cli-test.git"
   },
   "scripts": {
-    "test": "node ./__tests__/@cli-test/exec.test.js"
+    "test": "node ./__tests__/@cli-test/format-path.test.js"
   },
   "bugs": {
     "url": "https://github.com/zhengyx950211/cli-test/issues"
-  },
-  "dependencies": {
-    "@cli-test/package": "file:../../models/package",
-    "@cli-test/log": "file:../../utils/log"
   }
 }

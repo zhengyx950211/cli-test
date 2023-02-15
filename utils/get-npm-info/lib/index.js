@@ -6,26 +6,28 @@ const semver = require('semver');
 
 function getNpmInfo(npmName, registry) {
   if (!npmName) {
-    return
+    return;
   }
 
   registry = registry || getDefaultRegistry();
   const npmInfoUrl = urlJoin(registry, npmName);
 
-  return axios.get(npmInfoUrl).then(response => {
-    if (response?.status === 200) {
-      // return Object.keys(response.data?.versions);
-      return response.data?.['dist-tags']?.latest;
-    }
-  }).catch(error => {
-    // Promise.reject(error)
-  })
-  
+  return axios
+    .get(npmInfoUrl)
+    .then((response) => {
+      if (response?.status === 200) {
+        // return Object.keys(response.data?.versions);
+        return response.data?.['dist-tags']?.latest;
+      }
+    })
+    .catch((error) => {
+      // Promise.reject(error)
+    });
 }
 
 async function getNpmSemverVersion(baseVersion, npmName, registry) {
   const versions = await getNpmInfo(npmName, registry);
-  
+
   // let semverVersions = [];
 
   // if (versions && versions.length > 0) {
@@ -39,13 +41,17 @@ async function getNpmSemverVersion(baseVersion, npmName, registry) {
 
   // return semverVersions[0];
 
-  return versions
+  return versions;
 }
 
 function getDefaultRegistry(isOriginal = false) {
-  return isOriginal ? 'https://registry.npmjs.org/' : 'https://registry.npm.taobao.org'
+  return isOriginal
+    ? 'https://registry.npmjs.org/'
+    : 'https://registry.npm.taobao.org';
 }
 
 module.exports = {
-  getNpmSemverVersion
-}
+  getNpmSemverVersion,
+  getDefaultRegistry,
+  getNpmInfo,
+};
