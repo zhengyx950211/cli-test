@@ -1,7 +1,12 @@
 'use strict';
 
-module.exports = init;
+const Command = require('@cli-test/command');
 
-function init(projectName, cmdOptions) {
-  console.log(projectName, cmdOptions);
+class InitCommand extends Command {}
+
+function init(argv) {
+  return new InitCommand(argv);
 }
+
+module.exports = init;
+module.exports.InitCommand = InitCommand;

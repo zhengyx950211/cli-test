@@ -6,7 +6,7 @@ function formatPath(p) {
   if (p && typeof p === 'string') {
     // 分隔符 macOS: /  windows: \
     const sep = path.sep;
-    console.log('sep', sep);
+
     if (sep === '/') {
       return p;
     }

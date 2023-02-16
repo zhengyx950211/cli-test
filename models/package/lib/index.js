@@ -53,15 +53,22 @@ class Package {
     );
   }
 
+  getSpecificFilePath(version) {
+    return path.resolve(
+      this.storeDir,
+      `.store/${this.cacheFilePathPrefix}@${version}/node_modules/${this.packageName}`
+    );
+  }
+
   // 判断当前的 Package 是否存在
   async exists() {
     if (this.storeDir) {
       await this.prepare();
-      console.log(this.cacheFilePath);
+
       return pathExists(this.cacheFilePath);
-    } else {
-      return pathExists(this.targetPath);
     }
+
+    return pathExists(this.targetPath);
   }
 
   async install() {
@@ -77,24 +84,47 @@ class Package {
 
   async update() {
     // await this.prepare(); // 是否必要 exists() 时已执行
+    // 获取最新版本号
+    const latestVersion = await getNpmInfo(this.packageName);
+    // 查看最新版本号是否存在
+    const latestPath = this.getSpecificFilePath(latestVersion);
+    // 安装最新版本号
+    if (!pathExists(latestPath)) {
+      await npminstall({
+        root: this.targetPath,
+        storeDir: this.storeDir,
+        registry: getDefaultRegistry(),
+        pkgs: [{ name: this.packageName, version: latestVersion }],
+      });
+
+      this.packageVersion = latestVersion;
+    }
   }
 
   // 获取入口文件的路径
   getRootFilePath() {
-    // 1. 获取 package.json 所在的目录，即模块的根目录 -- pkg-dir
-    // ** pkg-dir 最新版本已对 windows 做了兼容， 不需要再使用 formatPath 了
-    const dir = pkgDir(this.targetPath);
-    // 2. 读取 package.json 中的 main 或 lib 输出 path
-    // 3. 路径的兼容 macOS/windows
-    if (dir) {
-      const pkg = require(path.resolve(dir, 'package.json'));
+    function _getFilePath(targetPath) {
+      // 1. 获取 package.json 所在的目录，即模块的根目录 -- pkg-dir
+      // ** pkg-dir 最新版本已对 windows 做了兼容， 不需要再使用 formatPath 了
+      const dir = pkgDir(targetPath);
+      // 2. 读取 package.json 中的 main 或 lib 输出 path
+      // 3. 路径的兼容 macOS/windows
+      if (dir) {
+        const pkg = require(path.resolve(dir, 'package.json'));
 
-      if (pkg && pkg.main) {
-        return formatPath(path.resolve(dir, pkg.main));
+        if (pkg && pkg.main) {
+          return formatPath(path.resolve(dir, pkg.main));
+        }
       }
+
+      return null;
     }
 
-    return null;
+    if (this.storeDir) {
+      return _getFilePath(this.cacheFilePath);
+    }
+
+    return _getFilePath(this.targetPath);
   }
 }
 
