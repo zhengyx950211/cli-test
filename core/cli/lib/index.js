@@ -17,7 +17,7 @@ const userHome = require('user-home');
 const pathExists = require('path-exists').sync;
 const commander = require('commander');
 const log = require('@cli-test/log');
-const init = require('@cli-test/init');
+// const init = require('@cli-test/init');
 const exec = require('@cli-test/exec');
 
 const constance = require('./const');
@@ -39,7 +39,7 @@ async function core() {
 
 async function prepare() {
   checkPkgVersion();
-  checkNodeVersion();
+  // checkNodeVersion(); 迁移至 Command
   checkRoot();
   checkUserHome();
   // checkInputArgs();
@@ -193,17 +193,17 @@ function checkRoot() {
  * 检查 node 版本
  * 可能使用的 node 的方法在某些版本不支持
  */
-function checkNodeVersion() {
-  // 获取当前版本号
-  const currentVersion = process.version;
-  const lowestVersion = constance.LOWEST_NODE_VERSION;
+// function checkNodeVersion() {
+//   // 获取当前版本号
+//   const currentVersion = process.version;
+//   const lowestVersion = constance.LOWEST_NODE_VERSION;
 
-  if (!semver.gte(currentVersion, lowestVersion)) {
-    throw Error(
-      colors.red(`使用 cli-test 的 node 版本号需 >= v${lowestVersion} `)
-    );
-  }
-}
+//   if (!semver.gte(currentVersion, lowestVersion)) {
+//     throw Error(
+//       colors.red(`使用 cli-test 的 node 版本号需 >= v${lowestVersion} `)
+//     );
+//   }
+// }
 
 /**
  * 检查版本号

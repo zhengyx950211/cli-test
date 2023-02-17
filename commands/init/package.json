@@ -27,6 +27,7 @@
     "url": "https://github.com/zhengyx950211/cli-test/issues"
   },
   "dependencies": {
-    "@cli-test/command": "file:../../models/command"
+    "@cli-test/command": "file:../../models/command",
+    "@cli-test/log": "file:../../utils/log"
   }
 }

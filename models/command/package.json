@@ -25,5 +25,10 @@
   },
   "bugs": {
     "url": "https://github.com/zhengyx950211/cli-test/issues"
+  },
+  "dependencies": {
+    "@cli-test/log": "file:../../utils/log",
+    "colors": "^1.4.0",
+    "semver": "^7.3.8"
   }
 }

@@ -1,5 +1,6 @@
 'use strict';
 
+const cp = require('child_process');
 const path = require('path');
 const Package = require('@cli-test/package');
 const log = require('@cli-test/log');
@@ -51,10 +52,47 @@ async function exec() {
 
   const rootFile = pkg.getRootFilePath();
   if (rootFile) {
-    // 在当前进程中调用
-    require(rootFile).call(null, Array.from(arguments));
+    try {
+      // 在当前进程中调用
+      // require(rootFile).call(null, Array.from(arguments));
 
-    // 在 node 子进程中调用
+      // 在 node 子进程中调用
+      const args = Array.from(arguments);
+      const cmd = args[args.length - 1];
+      const o = Object.create({});
+
+      o.optionValues = cmd.opts();
+
+      Object.keys(cmd).forEach((key) => {
+        if (
+          cmd.hasOwnProperty(key) &&
+          !key.startsWith('_') &&
+          key !== 'parent'
+        ) {
+          o[key] = cmd[key];
+        }
+      });
+
+      args[args.length - 1] = o;
+
+      let code = `require('${rootFile}').call(null, ${JSON.stringify(args)})`;
+      const child = cp.spawn('node', ['-e', code], {
+        cwd: process.cwd(),
+        stdio: 'inherit',
+      });
+
+      child.on('error', (e) => {
+        log.error(e.message);
+        process.exit(1);
+      });
+
+      child.on('exit', (e) => {
+        log.verbose('命令执行成功', e);
+        process.exit(e);
+      });
+    } catch (error) {
+      log.error(error?.message);
+    }
   }
 }
 
