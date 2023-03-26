@@ -5,7 +5,7 @@
   "author": "yexin.zheng <yexin.zheng@tcl.com>",
   "homepage": "https://github.com/zhengyx950211/cli-test/tree/main/packages/core#readme",
   "license": "ISC",
-  "main": "lib/core.js",
+  "main": "lib/index.js",
   "bin": {
     "cli-test": "bin/index.js"
   },
@@ -32,10 +32,10 @@
     "url": "https://github.com/zhengyx950211/cli-test/issues"
   },
   "dependencies": {
-    "@cli-test/get-npm-info": "file:../../utils/get-npm-info",
-    "@cli-test/log": "file:../../utils/log",
-    "@cli-test/init": "file:../../commands/init",
     "@cli-test/exec": "file:../exec",
+    "@cli-test/get-npm-info": "file:../../utils/get-npm-info",
+    "@cli-test/init": "file:../../commands/init",
+    "@cli-test/log": "file:../../utils/log",
     "colors": "^1.4.0",
     "commander": "^10.0.0",
     "dotenv": "^16.0.3",
