@@ -28,9 +28,13 @@
   },
   "dependencies": {
     "@cli-test/command": "file:../../models/command",
+    "@cli-test/package": "file:../../models/package",
     "@cli-test/log": "file:../../utils/log",
+    "@cli-test/request": "file:../../utils/request",
+    "@cli-test/utils": "file:../../utils/utils",
     "fs-extra": "^11.1.1",
     "inquirer": "^8.2.4",
-    "semver": "^7.3.8"
+    "semver": "^7.3.8",
+    "user-home": "^3.0.0"
   }
 }

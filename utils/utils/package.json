@@ -28,5 +28,8 @@
   },
   "bugs": {
     "url": "https://github.com/zhengyx950211/cli-test/issues"
+  },
+  "dependencies": {
+    "cli-spinner": "^0.2.10"
   }
 }

@@ -10,6 +10,6 @@ log.heading = 'zyx';
 // 前缀样式
 // log.headingStyle = { fg: 'black', bg: 'white' }
 // 添加自定义命令
-// log.addLevel('success', 2000, { fg: 'white', bold: true, bg: 'green' })
+log.addLevel('success', 2000, { fg: 'white', bold: true, bg: 'green' });
 
 module.exports = log;

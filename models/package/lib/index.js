@@ -83,7 +83,7 @@ class Package {
   }
 
   async update() {
-    // await this.prepare(); // 是否必要 exists() 时已执行
+    await this.prepare(); // 是否必要 exists() 时已执行
     // 获取最新版本号
     const latestVersion = await getNpmInfo(this.packageName);
     // 查看最新版本号是否存在
